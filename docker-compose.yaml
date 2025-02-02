@@ -2,6 +2,9 @@ services:
 
   auth:
     image: cesanta/docker_auth:1
+    command:
+     - --alsologtostderr
+     - /config/auth_config.yml
     restart: always
     volumes:
       - ./conf/auth-server.yml:/config/auth_config.yml
