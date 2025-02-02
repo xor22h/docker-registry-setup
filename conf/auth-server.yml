@@ -1,0 +1,50 @@
+server:
+  addr: ":5001"
+
+token:
+  issuer: "Acme auth server" # Must match issuer in the Registry config.
+  expiration: 900
+  key: "/certs/server.key"
+  certificate: "/certs/server.pem"
+
+users:
+  # Password is specified as a BCrypt hash. Use `htpasswd -nB USERNAME` to generate.
+  "username1":
+    password: "$2y$05$YSouiTqTc36VcV80P8lKXOMGGQRnzoqjQLKg8oar7ZJ0EFil2DtxC" # testing
+  "username2":
+    password: "$2y$05$YSouiTqTc36VcV80P8lKXOMGGQRnzoqjQLKg8oar7ZJ0EFil2DtxC" # testing
+  # example with labels  
+  "admin":
+    password: "$2y$05$YSouiTqTc36VcV80P8lKXOMGGQRnzoqjQLKg8oar7ZJ0EFil2DtxC" # testing
+    labels:
+      role: ["administrator"]
+  "developer":
+    password: "$2y$05$YSouiTqTc36VcV80P8lKXOMGGQRnzoqjQLKg8oar7ZJ0EFil2DtxC" # testing
+    labels:
+      team: ["backend"]
+      role: ["developer"]
+  "": {} # Allow anonymous (no "docker login") access.
+
+# Access is denied by default.
+acl:
+  - match: { account: "username1" }
+    actions: ["*"]
+    comment: "username1 has full access to everything."
+
+  - match: { account: "username2" }
+    actions: ["*"]
+    comment: "username2 has full access to everything."
+
+  - match: {label: "role=administrator"}
+    actions: ["*"]
+    comment: "Full registry access"
+
+  - match:
+      label: "role=developer"
+      name: "dev-{team}/**"
+    actions: ["push", "pull"]
+    comment: "Team-specific write access"
+  
+  - match: { account: "" }
+    actions: ["pull"]
+    comment: "Anonymous users can pull everything."

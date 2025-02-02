@@ -1,0 +1,8 @@
+services:
+  registry:
+    environment:
+      REGISTRY_STORAGE: s3
+      REGISTRY_STORAGE_S3_ACCESSKEY: accesskey
+      REGISTRY_STORAGE_S3_SECRETKEY: secretkey
+      REGISTRY_STORAGE_S3_BUCKET: bucketname
+      REGISTRY_STORAGE_S3_REGION: eu-west-1 

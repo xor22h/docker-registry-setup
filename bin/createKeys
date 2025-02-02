@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+openssl req -x509 -newkey rsa:4096 -keyout ./conf/keys/server.key -out ./conf/keys/server.pem -sha256 -days 3650 -nodes -subj "/CN=docker-auth-server-signing-key"

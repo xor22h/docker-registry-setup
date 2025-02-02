@@ -1,0 +1,36 @@
+services:
+
+  auth:
+    image: cesanta/docker_auth:1
+    restart: always
+    volumes:
+      - ./conf/auth-server.yml:/config/auth_config.yml
+      - ./conf/keys:/certs
+
+  registry:
+    image: registry:2
+    restart: always
+    environment:
+      # Where to listen
+      REGISTRY_HTTP_ADDR: 0.0.0.0:5000
+      REGISTRY_HTTP_SECRET: somerandomstringhere
+      # Registry auth
+      REGISTRY_AUTH: token
+      REGISTRY_AUTH_TOKEN_REALM: https://${AUTH_DOMAIN}/auth
+      REGISTRY_AUTH_TOKEN_SERVICE: "Docker registry"
+      REGISTRY_AUTH_TOKEN_ISSUER: "Acme auth server"
+      REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE: /certs/certificate.pem
+    volumes:
+      - ./conf/keys/server.pem:/certs/certificate.pem
+
+  caddy:
+    ports:
+      - 80:80
+      - 443:443
+    image: caddy:2
+    environment:
+      AUTH_DOMAIN: ${AUTH_DOMAIN}
+      REGISTRY_DOMAIN: ${REGISTRY_DOMAIN}
+    restart: always
+    volumes:
+      - ./conf/Caddyfile:/etc/caddy/Caddyfile

@@ -1,0 +1,7 @@
+{$REGISTRY_DOMAIN} {
+    reverse_proxy /v2/* registry:5000
+}
+
+{$AUTH_DOMAIN} {
+    reverse_proxy /* auth:5001
+}
